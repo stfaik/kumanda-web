@@ -1,52 +1,54 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>IRLED ile Kumanda Kontrolü</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    body { font-family: Arial, sans-serif; background:#f4f4f9; text-align:center; padding:40px; }
-    h1 { color:#333; }
-    .row { margin: 10px 0; }
-    button {
-      margin: 8px; padding: 14px 26px; font-size:18px; border:0; border-radius:10px;
-      cursor:pointer; background:#007BFF; color:#fff; transition:.2s;
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+      background: #f4f4f4;
     }
-    button:hover { background:#0056b3; }
-    .status { margin-top:18px; color:#555; font-size:14px; }
+    h1 {
+      color: #333;
+    }
+    button {
+      font-size: 20px;
+      margin: 10px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 8px;
+      background: #007BFF;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
   </style>
 </head>
 <body>
   <h1>IRLED ile Kumanda Kontrolü</h1>
+  <button onclick="sendCommand('CH+')">CH+</button>
+  <button onclick="sendCommand('CH-')">CH-</button>
+  <button onclick="sendCommand('VL+')">VL+</button>
+  <button onclick="sendCommand('VL-')">VL-</button>
+  <button onclick="sendCommand('POWER')">POWER</button>
 
-  <div class="row">
-    <button onclick="sendCommand('CH+')">CH+</button>
-    <button onclick="sendCommand('CH-')">CH-</button>
-  </div>
-  <div class="row">
-    <button onclick="sendCommand('VL+')">VL+</button>
-    <button onclick="sendCommand('VL-')">VL-</button>
-  </div>
-  <div class="row">
-    <button onclick="sendCommand('POWER')">POWER</button>
-  </div>
-
-  <div class="status" id="status"></div>
+  <p id="status"></p>
 
   <script>
-    const BACKEND = "https://SENIN-BACKEND-ADRESIN.onrender.com"; // birazdan dolduracaksın
-    const KEY = "SENIN_GIZLI_ANAHTARIN"; // backend'de tanımlayacağın SECRET_KEY ile aynı olmalı
+    const backendUrl = "https://kumanda-backend.onrender.com"; // Render backend URL’in
 
     async function sendCommand(cmd) {
-      const s = document.getElementById("status");
-      s.textContent = "Gönderiliyor...";
+      document.getElementById("status").innerText = "Gönderiliyor...";
       try {
-        const url = `${BACKEND}/command?cmd=${encodeURIComponent(cmd)}&key=${encodeURIComponent(KEY)}`;
-        const res = await fetch(url, { method: "GET" });
-        const text = await res.text();
-        s.textContent = "Sunucu yanıtı: " + text;
-      } catch (e) {
-        s.textContent = "Hata: " + e;
+        const response = await fetch(`${backendUrl}/command?cmd=${cmd}&key=benim-gizli-keyim-123`);
+        const data = await response.text();
+        document.getElementById("status").innerText = "Sunucudan cevap: " + data;
+      } catch (err) {
+        document.getElementById("status").innerText = "Hata: " + err;
       }
     }
   </script>
